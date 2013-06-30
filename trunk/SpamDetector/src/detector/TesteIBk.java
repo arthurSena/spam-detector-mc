@@ -24,6 +24,7 @@ public class TesteIBk {
          IBk k3 = new IBk(3);
          k3.buildClassifier(D);
          
+         
         //------------------------------------------------------
         // (3) Classificando um novo exemplo
         //------------------------------------------------------
@@ -31,12 +32,13 @@ public class TesteIBk {
          // 3.1 criação de uma nova instância
          Instance newInst = new Instance(5);
          newInst.setDataset(D);
-         newInst.setValue(0, "overcast");
-         newInst.setValue(1, 83);
-         newInst.setValue(2, 86);
-         newInst.setValue(3, "FALSE");
+         newInst.setValue(0, "rainy");
+         newInst.setValue(1, 71);
+         newInst.setValue(2, 79);
+         newInst.setValue(3, "TRUE");
          // 3.2 classificação de uma nova instância
          double pred = k3.classifyInstance(newInst);
+         
  
          // 3.3 imprime o valor de pred
          System.out.println("Predição: " + pred);
