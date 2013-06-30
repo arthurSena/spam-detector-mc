@@ -1,65 +1,96 @@
-@RELATION Spambase
+% SPAM E-MAIL DATABASE ATTRIBUTES (in .names format)
+%
+% 48 continuous real [0,100] attributes of type word_freq_WORD 
+% = percentage of words in the e-mail that match WORD,
+% i.e. 100 * (number of times the WORD appears in the e-mail) / 
+% total number of words in e-mail.  A "word" in this case is any 
+% string of alphanumeric characters bounded by non-alphanumeric 
+% characters or end-of-string.
+%
+% 6 continuous real [0,100] attributes of type char_freq_CHAR
+% = percentage of characters in the e-mail that match CHAR,
+% i.e. 100 * (number of CHAR occurences) / total characters in e-mail
+%
+% 1 continuous real [1,...] attribute of type capital_run_length_average
+% = average length of uninterrupted sequences of capital letters
+%
+% 1 continuous integer [1,...] attribute of type capital_run_length_longest
+% = length of longest uninterrupted sequence of capital letters
+%
+% 1 continuous integer [1,...] attribute of type capital_run_length_total
+% = sum of length of uninterrupted sequences of capital letters
+% = total number of capital letters in the e-mail
+%
+% 1 nominal {0,1} class attribute of type spam
+% = denotes whether the e-mail was considered spam (1) or not (0), 
+% i.e. unsolicited commercial e-mail.  
+%
+% For more information, see file 'spambase.DOCUMENTATION' at the
+% UCI Machine Learning Repository: http://www.ics.uci.edu/~mlearn/MLRepository.html
 
-@ATTRIBUTE word_freq_make NUMERIC
-@ATTRIBUTE word_freq_address NUMERIC
-@ATTRIBUTE word_freq_all NUMERIC
-@ATTRIBUTE word_freq_3d NUMERIC
-@ATTRIBUTE word_freq_our NUMERIC
-@ATTRIBUTE word_freq_over NUMERIC
-@ATTRIBUTE word_freq_remove NUMERIC
-@ATTRIBUTE word_freq_internet NUMERIC
-@ATTRIBUTE word_freq_order NUMERIC
-@ATTRIBUTE word_freq_mail NUMERIC
-@ATTRIBUTE word_freq_receive NUMERIC
-@ATTRIBUTE word_freq_will NUMERIC
-@ATTRIBUTE word_freq_people NUMERIC
-@ATTRIBUTE word_freq_report NUMERIC
-@ATTRIBUTE word_freq_addresses NUMERIC
-@ATTRIBUTE word_freq_free NUMERIC
-@ATTRIBUTE word_freq_business NUMERIC
-@ATTRIBUTE word_freq_email NUMERIC
-@ATTRIBUTE word_freq_you NUMERIC
-@ATTRIBUTE word_freq_credit NUMERIC
-@ATTRIBUTE word_freq_your NUMERIC
-@ATTRIBUTE word_freq_font NUMERIC
-@ATTRIBUTE word_freq_000 NUMERIC
-@ATTRIBUTE word_freq_money NUMERIC
-@ATTRIBUTE word_freq_hp NUMERIC
-@ATTRIBUTE word_freq_hpl NUMERIC
-@ATTRIBUTE word_freq_george NUMERIC
-@ATTRIBUTE word_freq_650 NUMERIC
-@ATTRIBUTE word_freq_lab NUMERIC
-@ATTRIBUTE word_freq_labs NUMERIC
-@ATTRIBUTE word_freq_telnet NUMERIC
-@ATTRIBUTE word_freq_857 NUMERIC
-@ATTRIBUTE word_freq_data NUMERIC
-@ATTRIBUTE word_freq_415 NUMERIC
-@ATTRIBUTE word_freq_85 NUMERIC
-@ATTRIBUTE word_freq_technology NUMERIC
-@ATTRIBUTE word_freq_1999 NUMERIC
-@ATTRIBUTE word_freq_parts NUMERIC
-@ATTRIBUTE word_freq_pm NUMERIC
-@ATTRIBUTE word_freq_direct NUMERIC
-@ATTRIBUTE word_freq_cs NUMERIC
-@ATTRIBUTE word_freq_meeting NUMERIC
-@ATTRIBUTE word_freq_original NUMERIC
-@ATTRIBUTE word_freq_project NUMERIC
-@ATTRIBUTE word_freq_re NUMERIC
-@ATTRIBUTE word_freq_edu NUMERIC
-@ATTRIBUTE word_freq_table NUMERIC
-@ATTRIBUTE word_freq_conference NUMERIC
-@ATTRIBUTE char_freq_; NUMERIC
-@ATTRIBUTE char_freq_( NUMERIC
-@ATTRIBUTE char_freq_[ NUMERIC
-@ATTRIBUTE char_freq_! NUMERIC
-@ATTRIBUTE char_freq_$ NUMERIC
-@ATTRIBUTE char_freq_# NUMERIC
-@ATTRIBUTE capital_run_length_average NUMERIC
-@ATTRIBUTE capital_run_length_longest NUMERIC
-@ATTRIBUTE capital_run_length_total NUMERIC
-@ATTRIBUTE is_spam {0,1}
+@relation spambase
 
-@DATA
+@attribute word_freq_make         numeric
+@attribute word_freq_address      numeric
+@attribute word_freq_all          numeric
+@attribute word_freq_3d           numeric
+@attribute word_freq_our          numeric
+@attribute word_freq_over         numeric
+@attribute word_freq_remove       numeric
+@attribute word_freq_internet     numeric
+@attribute word_freq_order        numeric
+@attribute word_freq_mail         numeric
+@attribute word_freq_receive      numeric
+@attribute word_freq_will         numeric
+@attribute word_freq_people       numeric
+@attribute word_freq_report       numeric
+@attribute word_freq_addresses    numeric
+@attribute word_freq_free         numeric
+@attribute word_freq_business     numeric
+@attribute word_freq_email        numeric
+@attribute word_freq_you          numeric
+@attribute word_freq_credit       numeric
+@attribute word_freq_your         numeric
+@attribute word_freq_font         numeric
+@attribute word_freq_000          numeric
+@attribute word_freq_money        numeric
+@attribute word_freq_hp           numeric
+@attribute word_freq_hpl          numeric
+@attribute word_freq_george       numeric
+@attribute word_freq_650          numeric
+@attribute word_freq_lab          numeric
+@attribute word_freq_labs         numeric
+@attribute word_freq_telnet       numeric
+@attribute word_freq_857          numeric
+@attribute word_freq_data         numeric
+@attribute word_freq_415          numeric
+@attribute word_freq_85           numeric
+@attribute word_freq_technology   numeric
+@attribute word_freq_1999         numeric
+@attribute word_freq_parts        numeric
+@attribute word_freq_pm           numeric
+@attribute word_freq_direct       numeric
+@attribute word_freq_cs           numeric
+@attribute word_freq_meeting      numeric
+@attribute word_freq_original     numeric
+@attribute word_freq_project      numeric
+@attribute word_freq_re           numeric
+@attribute word_freq_edu          numeric
+@attribute word_freq_table        numeric
+@attribute word_freq_conference   numeric
+@attribute char_freq_;            numeric
+@attribute char_freq_(            numeric
+@attribute char_freq_[            numeric
+@attribute char_freq_!            numeric
+@attribute char_freq_$            numeric
+@attribute char_freq_#            numeric
+@attribute capital_run_length_average numeric
+@attribute capital_run_length_longest numeric
+@attribute capital_run_length_total   numeric
+@attribute spam 		  {0,1}
+
+@data
+
 0,0.64,0.64,0,0.32,0,0,0,0,0,0,0.64,0,0,0,0.32,0,1.29,1.93,0,0.96,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.778,0,0,3.756,61,278,1
 0.21,0.28,0.5,0,0.14,0.28,0.21,0.07,0,0.94,0.21,0.79,0.65,0.21,0.14,0.14,0.07,0.28,3.47,0,1.59,0,0.43,0.43,0,0,0,0,0,0,0,0,0,0,0,0,0.07,0,0,0,0,0,0,0,0,0,0,0,0,0.132,0,0.372,0.18,0.048,5.114,101,1028,1
 0.06,0,0.71,0,1.23,0.19,0.19,0.12,0.64,0.25,0.38,0.45,0.12,0,1.75,0.06,0.06,1.03,1.36,0.32,0.51,0,1.16,0.06,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.06,0,0,0.12,0,0.06,0.06,0,0,0.01,0.143,0,0.276,0.184,0.01,9.821,485,2259,1
