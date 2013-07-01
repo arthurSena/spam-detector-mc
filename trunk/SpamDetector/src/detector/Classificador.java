@@ -52,17 +52,18 @@ public class Classificador {
      * @param mensagem Mensagem a ser Analizada
      * @return HashMap com as chaves ( palavras ) e valores ( numero de ocorrencia da palavra )
      */
-    private static HashMap<String, Integer> attributesScan(String mensagem){
-    	HashMap<String, Integer> mapaOcorrencias = new HashMap<String, Integer>();
+    private static HashMap<String, Double> attributesScan(String mensagem){
+    	HashMap<String, Double> mapaOcorrencias = new HashMap<String, Double>();
     	
     	String[] palavras = new String[]{"make","address","all","3d","our","over","remove","internet",
     			"order","mail","receive","will","people","report","addresses","free","business","email",
     			"you","credit","your","font","000","money","hp","hpl","george","650","lab","labs","telnet",
     			"857","data","415","85","technology","1999", "parts","pm","direct","cs","meeting","original",
-    			"project","re","edu","table","conference",";","(","[","!","$"};
+    			"project","re","edu","table","conference",";","(","[","!","$", "capital_run_length_average",
+    			"capital_run_length_longest", "capital_run_length_total"};
     	
     	for(int i = 0; i < palavras.length; i++){
-    		mapaOcorrencias.put(palavras[i], 0);
+    		mapaOcorrencias.put(palavras[i], 0.0);
     	}
     	
     	String[] aux = mensagem.split(" ");
@@ -73,10 +74,14 @@ public class Classificador {
     		
     		for(int j = 0; j < aux.length; j++){
     			if(aux[j].contains(chaves[i].toString())){
-    				mapaOcorrencias.put(chaves[i].toString(), mapaOcorrencias.get(chaves[i].toString()) + 1);
+    				mapaOcorrencias.put(chaves[i].toString(), mapaOcorrencias.get(chaves[i].toString()) + 1.0);
     			}
     		}
     	}
+    	
+    	mapaOcorrencias.put("capital_run_length_average", capital_run_length_average(mensagem));
+    	mapaOcorrencias.put("capital_run_length_longest", capital_run_length_longest(mensagem));
+    	mapaOcorrencias.put("capital_run_length_total", capital_run_length_total(mensagem));
     	
     	
 		return mapaOcorrencias;
@@ -108,9 +113,9 @@ public class Classificador {
      * @param mensagem Mensagem a ser Analizada
      * @return Tamanho da maior palavra totalmente capitalizada
      */
-    private static int capital_run_length_longest(String mensagem){
+    private static double capital_run_length_longest(String mensagem){
     	String[] aux = mensagem.split(" ");
-    	int maiorPalavraMaiuscula = 0;
+    	double maiorPalavraMaiuscula = 0.0;
     	
     	for(int i = 0; i < aux.length; i++){
     		String auxString = aux[i].trim();
@@ -130,9 +135,9 @@ public class Classificador {
      * @param mensagem Mensagem a ser Analizada
      * @return Tamanho total das palavras totalmente capitalizadas
      */
-    private static int capital_run_length_total(String mensagem){
+    private static double capital_run_length_total(String mensagem){
     	String[] aux = mensagem.split(" ");
-    	int contLetrasMaiusculas = 0;
+    	double contLetrasMaiusculas = 0;
     	for(int i = 0; i < aux.length; i++){
     		String auxString = aux[i].trim();
     		if(auxString.toUpperCase().equals(auxString)){
