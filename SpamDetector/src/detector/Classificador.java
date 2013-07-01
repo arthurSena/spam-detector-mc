@@ -50,7 +50,7 @@ public class Classificador {
     /**
      * Metodo que retorna a PORCENTAGEM de ocorrencias dos caracteres listados, em forma de um HashMap
      * @param mensagem Mensagem a ser Analizada
-     * @return HashMap com as chaves ( palavras ) e valores ( numero de ocorrencia da palavra )
+     * @return HashMap com as chaves ( palavras ) e valores ( porcentagem da ocorrencia da palavra )
      */
     private static HashMap<String, Double> attributesScan(String mensagem){
     	HashMap<String, Double> mapaOcorrencias = new HashMap<String, Double>();
