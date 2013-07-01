@@ -48,7 +48,7 @@ public class Classificador {
          
     }
     /**
-     * Metodo que retorna a QUANTIDADE de ocorrencias dos caracteres listados, em forma de um HashMap
+     * Metodo que retorna a PORCENTAGEM de ocorrencias dos caracteres listados, em forma de um HashMap
      * @param mensagem Mensagem a ser Analizada
      * @return HashMap com as chaves ( palavras ) e valores ( numero de ocorrencia da palavra )
      */
