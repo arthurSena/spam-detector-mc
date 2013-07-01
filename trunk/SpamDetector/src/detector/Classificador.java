@@ -81,7 +81,7 @@ public class Classificador {
     	
     	
     	for(int i = 0; i < chaves.length; i++){
-    		mapaOcorrencias.put(chaves[i].toString(), (mapaOcorrencias.get(chaves[i].toString()) / aux.length) * 100 );
+    		mapaOcorrencias.put(chaves[i].toString(), (mapaOcorrencias.get(chaves[i].toString()) / aux.length) * 100.0 );
     	}
     	
     	
