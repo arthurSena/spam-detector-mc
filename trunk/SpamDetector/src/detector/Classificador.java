@@ -47,7 +47,11 @@ public class Classificador {
          System.out.println("Predição: " + pred);
          
     }
-    
+    /**
+     * Metodo que retorna a QUANTIDADE de ocorrencias dos caracteres listados, em forma de um HashMap
+     * @param mensagem Mensagem a ser Analizada
+     * @return HashMap com as chaves ( palavras ) e valores ( numero de ocorrencia da palavra )
+     */
     private static HashMap<String, Integer> attributesScan(String mensagem){
     	HashMap<String, Integer> mapaOcorrencias = new HashMap<String, Integer>();
     	
@@ -73,7 +77,69 @@ public class Classificador {
     			}
     		}
     	}
+    	
+    	
 		return mapaOcorrencias;
     	
     }
+    /**
+     * Metodo que retorna a media de letras maiusculas da mensagem
+     * @param mensagem Mensagem a ser Analizada
+     * @return Numero medio de letras maiusculas na mensagem
+     */
+    private static double capital_run_length_average(String mensagem){
+    	String[] aux = mensagem.split(" ");
+    	double contLetrasMaiusculas = 0;
+    	double contPalavrasMaiusculas = 0;
+    	for(int i = 0; i < aux.length; i++){
+    		String auxString = aux[i].trim();
+    		if(auxString.toUpperCase().equals(auxString)){
+    			contLetrasMaiusculas = contLetrasMaiusculas + auxString.length();
+    			contPalavrasMaiusculas++;
+    		}
+    	}
+    	
+    	double media = contLetrasMaiusculas / contPalavrasMaiusculas;
+    	return media;
+    	
+    }
+    /**
+     * Metodo que retorna o tamanho da maior palavra maiuscula na mensagem
+     * @param mensagem Mensagem a ser Analizada
+     * @return Tamanho da maior palavra totalmente capitalizada
+     */
+    private static int capital_run_length_longest(String mensagem){
+    	String[] aux = mensagem.split(" ");
+    	int maiorPalavraMaiuscula = 0;
+    	
+    	for(int i = 0; i < aux.length; i++){
+    		String auxString = aux[i].trim();
+    		if(auxString.toUpperCase().equals(auxString)){
+    			if(auxString.length() > maiorPalavraMaiuscula){
+    				maiorPalavraMaiuscula = auxString.length();
+    			}
+    			
+    		}
+    	}
+    	
+    	return maiorPalavraMaiuscula;
+    	
+    }
+    /**
+     * Metodo que retorna o total de letras maiusculas de palavras totalmente capitalizadas
+     * @param mensagem Mensagem a ser Analizada
+     * @return Tamanho total das palavras totalmente capitalizadas
+     */
+    private static int capital_run_length_total(String mensagem){
+    	String[] aux = mensagem.split(" ");
+    	int contLetrasMaiusculas = 0;
+    	for(int i = 0; i < aux.length; i++){
+    		String auxString = aux[i].trim();
+    		if(auxString.toUpperCase().equals(auxString)){
+    			contLetrasMaiusculas = contLetrasMaiusculas + auxString.length();
+    		}
+    	}
+    	return contLetrasMaiusculas;
+    }
+    
 }
