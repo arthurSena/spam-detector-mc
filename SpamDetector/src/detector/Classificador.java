@@ -45,6 +45,7 @@ public class Classificador {
  
          // 3.3 imprime o valor de pred
          System.out.println("Predição: " + pred);
+         System.out.println();
          
     }
     /**
