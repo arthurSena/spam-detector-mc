@@ -9,72 +9,140 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import weka.classifiers.lazy.IBk;
+import weka.classifiers.lazy.IB1;
+import weka.classifiers.lazy.KStar;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 public class Classificador {
     public static void main(String[] args) throws Exception {
+    	System.out.println("sçklfjdaskldjfklasjdfklasjdfklasjdkflaskldfjaskldfj");
         //------------------------------------------------------
         // (1) importaÃ§Ã£o da base de dados de treinamento
         //------------------------------------------------------
-         DataSource source = new DataSource("spambase.arff");
-         Instances D = source.getDataSet();
+    	boolean verbose = false;
+        if(args.length <3 ){
+        	System.out.println("Entrada invalida !!!");
+        }
+    	else if(args[0].isEmpty()|| args[1].isEmpty()|| args[2].isEmpty()){
+    		System.out.println("Entrada inválida !!!");
+    	}
+    	else{
+    		if(args[0].equalsIgnoreCase("-v")){
+    			verbose = true;
+    		}
+    		try{
+    			DataSource source;
+    			if(verbose){
+    				source = new DataSource(args[2]);
+    			}
+    			else{
+    				source = new DataSource(args[1]);
+    			}
+               Instances D = source.getDataSet();
+            
+            // 1.1 - espeficicaÃ§Ã£o do atributo classe
+            if (D.classIndex() == -1) {
+                D.setClassIndex(D.numAttributes() - 1);
+            }
+           //------------------------------------------------------
+           // (2) ConstruÃ§Ã£o do modelo classificador (treinamento)
+           //------------------------------------------------------
+            IBk k3 = new IBk(3);
+            k3.buildClassifier(D);
+            
+            KStar kstar = new KStar();
+            kstar.buildClassifier(D);
+            
+            IB1 ib1 = new IB1();
+            ib1.buildClassifier(D);
+            
+           //------------------------------------------------------
+           // (3) Classificando um novo exemplo
+           //------------------------------------------------------
+            
+            String[] palavras = new String[]{"make","address","all","3d","our","over","remove","internet",
+        			"order","mail","receive","will","people","report","addresses","free","business","email",
+        			"you","credit","your","font","000","money","hp","hpl","george","650","lab","labs","telnet",
+        			"857","data","415","85","technology","1999", "parts","pm","direct","cs","meeting","original",
+        			"project","re","edu","table","conference",";","(","[","!","$","#", "capital_run_length_average",
+        			"capital_run_length_longest", "capital_run_length_total"};
+            
+            File arquivos[];  
+//            File diretorio = new File("C:/Users/User/Desktop/Projetos Java/SpamDetector/enron2/ham"); 
+            File diretorio;
+            if(verbose){
+            	 diretorio = new File(args[3]);  
+            }
+            else{
+            	 diretorio = new File(args[2]);  
+            }
+            arquivos = diretorio.listFiles();  
+            
+            for(int i=0;i<arquivos.length;i++){
+           	 try {  
+                    FileReader reader = new FileReader(arquivos[i]);  
+                    BufferedReader input = new BufferedReader(reader);  
+                    String linha;  
+                    String email = "";
+                    while ((linha = input.readLine()) != null) {  
+                      email +=linha+"\n";
+                    }  
+                    input.close();  
+                    HashMap<String, Double> mapa = attributesScan(email);
+                    Instance objeto = new Instance(58);
+                    objeto.setDataset(D);
+                    int cont = 0;
+                    for (String z :palavras){
+                   	 objeto.setValue(cont, mapa.get(z));
+                   	 cont ++;
+                    }
+                    
+                    if(args[0].equalsIgnoreCase("ibk") || args[1].equalsIgnoreCase("ibk")){
+                    	if(verbose){
+                    		if(k3.classifyInstance(objeto)==1){
+                             	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                              }
+                              else{
+                             	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                              }
+                            System.out.println("---------------------------------------------------------");
+                    	}
+                    }
+                    else if(args[0].equalsIgnoreCase("kstar") || args[1].equalsIgnoreCase("kstar")){
+                    	if(verbose){
+                    	if(kstar.classifyInstance(objeto)==1){
+                          	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                           }
+                           else{
+                          	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                           }
+                           System.out.println("---------------------------------------------------------");}
+                    }
+                    else if(args[0].equalsIgnoreCase("ib1") || args[1].equalsIgnoreCase("ib1")){
+                    	if(verbose){
+                    	if(ib1.classifyInstance(objeto)==1){
+                          	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                           }
+                           else{
+                          	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                           }
+                           System.out.println("---------------------------------------------------------");}
+                    }else{
+                    	System.out.println("Digite um classificador valido !!!");
+                    }
+                  } catch (IOException ioe) {  
+                     System.out.println("Não foi possível ler o arquivo: " + arquivos[1].getName());  
+                  }  
+            }
+    		}
+    		catch (Exception e) {
+				System.out.println("Verifique o diretorio !!!");
+			}
+    	}
+    	
+    	
          
-         // 1.1 - espeficicaÃ§Ã£o do atributo classe
-         if (D.classIndex() == -1) {
-             D.setClassIndex(D.numAttributes() - 1);
-         }
-        //------------------------------------------------------
-        // (2) ConstruÃ§Ã£o do modelo classificador (treinamento)
-        //------------------------------------------------------
-         IBk k3 = new IBk(3);
-         k3.buildClassifier(D);
-         
-         
-        //------------------------------------------------------
-        // (3) Classificando um novo exemplo
-        //------------------------------------------------------
-         
-         String[] palavras = new String[]{"make","address","all","3d","our","over","remove","internet",
-     			"order","mail","receive","will","people","report","addresses","free","business","email",
-     			"you","credit","your","font","000","money","hp","hpl","george","650","lab","labs","telnet",
-     			"857","data","415","85","technology","1999", "parts","pm","direct","cs","meeting","original",
-     			"project","re","edu","table","conference",";","(","[","!","$","#", "capital_run_length_average",
-     			"capital_run_length_longest", "capital_run_length_total"};
-         
-         File arquivos[];  
-         File diretorio = new File("C:/Users/User/Desktop/Projetos Java/SpamDetector/enron2/ham");  
-         arquivos = diretorio.listFiles();  
-         
-         for(int i=0;i<arquivos.length;i++){
-        	 try {  
-                 FileReader reader = new FileReader(arquivos[i]);  
-                 BufferedReader input = new BufferedReader(reader);  
-                 String linha;  
-                 String email = "";
-                 while ((linha = input.readLine()) != null) {  
-                   email +=linha+"\n";
-                 }  
-                 input.close();  
-                 HashMap<String, Double> mapa = attributesScan(email);
-                 Instance objeto = new Instance(58);
-                 objeto.setDataset(D);
-                 int cont = 0;
-                 for (String z :palavras){
-                	 objeto.setValue(cont, mapa.get(z));
-                	 cont ++;
-                 }
-                 if(k3.classifyInstance(objeto)==1){
-                	 System.out.println(arquivos[i].getName() + ": " + "spam");
-                 }
-                 else{
-                	 System.out.println(arquivos[i].getName() + ": " + "ham");
-                 }
-                 System.out.println("---------------------------------------------------------");
-               } catch (IOException ioe) {  
-                  System.out.println("Não foi possível ler o arquivo: " + arquivos[1].getName());  
-               }  
-         }
          
          
         
