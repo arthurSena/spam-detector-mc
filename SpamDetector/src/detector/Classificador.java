@@ -2,10 +2,18 @@ package detector;
 
 
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
+
+import javax.smartcardio.ATR;
 
 import weka.core.converters.ConverterUtils.DataSource;
 
+import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.Instance;
 import weka.classifiers.lazy.IBk;
@@ -14,7 +22,7 @@ public class Classificador {
         //------------------------------------------------------
         // (1) importação da base de dados de treinamento
         //------------------------------------------------------
-         DataSource source = new DataSource("weather.arff");
+         DataSource source = new DataSource("spambase.arff");
          Instances D = source.getDataSet();
          
          // 1.1 - espeficicação do atributo classe
@@ -32,20 +40,64 @@ public class Classificador {
         // (3) Classificando um novo exemplo
         //------------------------------------------------------
          
-         // 3.1 criação de uma nova instância
-         Instance newInst = new Instance(5);
-         newInst.setDataset(D);
-         newInst.setValue(0, "rainy");
-         newInst.setValue(1, 71);
-         newInst.setValue(2, 79);
-         newInst.setValue(3, "TRUE");
-         // 3.2 classificação de uma nova instância
-         double pred = k3.classifyInstance(newInst);
+         String[] palavras = new String[]{"make","address","all","3d","our","over","remove","internet",
+     			"order","mail","receive","will","people","report","addresses","free","business","email",
+     			"you","credit","your","font","000","money","hp","hpl","george","650","lab","labs","telnet",
+     			"857","data","415","85","technology","1999", "parts","pm","direct","cs","meeting","original",
+     			"project","re","edu","table","conference",";","(","[","!","$","#", "capital_run_length_average",
+     			"capital_run_length_longest", "capital_run_length_total"};
          
- 
-         // 3.3 imprime o valor de pred
-         System.out.println("Predição: " + pred);
-         System.out.println();
+         File arquivos[];  
+         File diretorio = new File("C:/Users/ARTHUR SENA/Documents/Projeto Metodologia/SpamDetector/enron2/ham");  
+         arquivos = diretorio.listFiles();  
+         
+         for(int i=0;i<arquivos.length;i++){
+        	 try {  
+                 FileReader reader = new FileReader(arquivos[i]);  
+                 BufferedReader input = new BufferedReader(reader);  
+                 String linha;  
+                 String email = "";
+                 while ((linha = input.readLine()) != null) {  
+                   email +=linha+"\n";
+                 }  
+                 input.close();  
+                 HashMap<String, Double> mapa = attributesScan(email);
+                 Instance objeto = new Instance(58);
+                 objeto.setDataset(D);
+                 int cont = 0;
+                 for (String z :palavras){
+                	 objeto.setValue(cont, mapa.get(z));
+                	 cont ++;
+                 }
+                 if(k3.classifyInstance(objeto)==1){
+                	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                 }
+                 else{
+                	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                 }
+                 System.out.println("---------------------------------------------------------");
+               } catch (IOException ioe) {  
+                  System.out.println("N�o foi poss�vel ler o arquivo: " + arquivos[1].getName());  
+               }  
+         }
+         
+         
+        
+         
+         // 3.1 criação de uma nova instância
+//         Instance newInst = new Instance(5);
+//         newInst.setDataset(D);
+//         newInst.setValue(0, "rainy");
+//         newInst.setValue(1, 71);
+//         newInst.setValue(2, 79);
+//         newInst.setValue(3, "TRUE");
+//         // 3.2 classificação de uma nova instância
+//         double pred = k3.classifyInstance(newInst);
+//         
+// 
+//         // 3.3 imprime o valor de pred
+//         System.out.println("Predi��o: " + pred);
+//         System.out.println();
          
     }
     /**
@@ -60,7 +112,7 @@ public class Classificador {
     			"order","mail","receive","will","people","report","addresses","free","business","email",
     			"you","credit","your","font","000","money","hp","hpl","george","650","lab","labs","telnet",
     			"857","data","415","85","technology","1999", "parts","pm","direct","cs","meeting","original",
-    			"project","re","edu","table","conference",";","(","[","!","$", "capital_run_length_average",
+    			"project","re","edu","table","conference",";","(","[","!","$","#", "capital_run_length_average",
     			"capital_run_length_longest", "capital_run_length_total"};
     	
     	for(int i = 0; i < palavras.length; i++){
