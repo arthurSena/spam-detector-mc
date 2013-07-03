@@ -6,17 +6,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.HashMap;
 
-import javax.smartcardio.ATR;
-
-import weka.core.converters.ConverterUtils.DataSource;
-
-import weka.core.Attribute;
-import weka.core.Instances;
-import weka.core.Instance;
 import weka.classifiers.lazy.IBk;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 public class Classificador {
     public static void main(String[] args) throws Exception {
         //------------------------------------------------------
@@ -48,7 +43,7 @@ public class Classificador {
      			"capital_run_length_longest", "capital_run_length_total"};
          
          File arquivos[];  
-         File diretorio = new File("C:/Users/ARTHUR SENA/Documents/Projeto Metodologia/SpamDetector/enron2/ham");  
+         File diretorio = new File("C:/Users/User/Desktop/Projetos Java/SpamDetector/enron2/ham");  
          arquivos = diretorio.listFiles();  
          
          for(int i=0;i<arquivos.length;i++){
