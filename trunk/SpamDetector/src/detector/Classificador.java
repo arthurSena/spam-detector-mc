@@ -17,14 +17,21 @@ import weka.classifiers.Evaluation;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.IB1;
 import weka.classifiers.lazy.KStar;
+import weka.core.Attribute;
+import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 public class Classificador {
+	
+	private static Instances emails;
+	
+	
     public static void main(String[] args) throws Exception {
 
     	boolean verbose = false;
     	String out = "";
+    	
     	
     	//Definindo os valores da entrada
     	
@@ -51,6 +58,8 @@ public class Classificador {
             //espeficicao do atributo classe
     			
     		Instances D = source.getDataSet();
+    		
+    		  
     		
             if (D.classIndex() == -1) {
                 D.setClassIndex(D.numAttributes() - 1);
@@ -82,6 +91,33 @@ public class Classificador {
             //Laco para imprimir os valores das analizes de cada email de acordo
             //com o algoritmo passado na entrada
             
+            FastVector fvWekaAttributes = new FastVector(58);
+            for (String i : palavras ){
+            	Attribute Attribute1;
+            	if(i.equals("capital_run_length_average")){
+            		Attribute1 = new Attribute(i);
+            	}
+            	else if(i.equals("capital_run_length_longest")){
+            		Attribute1 = new Attribute(i);
+            	}
+            	else if(i.equals("capital_run_length_total")){
+            		Attribute1 = new Attribute(i);
+            	}
+            	else{
+            		Attribute1 = new Attribute("word_freq_"+i);
+            	}
+            	fvWekaAttributes.addElement(Attribute1);
+            }
+            
+            FastVector fvClassVal = new FastVector(2);
+            fvClassVal.addElement("0");
+            fvClassVal.addElement("1");
+            Attribute ClassAttribute = new Attribute("spambase", fvClassVal);
+            fvWekaAttributes.addElement(ClassAttribute);
+            Instances emails = new Instances("emails", fvWekaAttributes, 500);
+            emails.setClassIndex(57);
+            
+            
             for(int i=0;i<arquivos.length;i++){
            	 try {  
                     FileReader reader = new FileReader(arquivos[i]);  
@@ -94,13 +130,32 @@ public class Classificador {
                     input.close();  
                     HashMap<String, Double> mapa = attributesScan(email);
                     Instance objeto = new Instance(58);
+                    Instance objeto2 = new Instance(58);
                     objeto.setDataset(D);
+                    objeto2.setDataset(D);
                     int cont = 0;
-                    for (String z :palavras){
-                   	 objeto.setValue(cont, mapa.get(z));
-                   	 cont ++;
-                    }
-                    
+					for (String z : palavras) {
+						objeto.setValue(cont, mapa.get(z));
+						objeto2.setValue((Attribute) fvWekaAttributes.elementAt(cont) , mapa.get(z));
+						cont++;
+					}
+		            if(args[0].equalsIgnoreCase("ibk") || args[1].equalsIgnoreCase("ibk")){
+		            	classificador = new IBk(3);
+                    	classificador.buildClassifier(D);
+		            }else if(args[0].equalsIgnoreCase("kstar") || args[1].equalsIgnoreCase("kstar")){
+		            	classificador = new KStar();
+                    	classificador.buildClassifier(D);
+		            } else if(args[0].equalsIgnoreCase("ib1") || args[1].equalsIgnoreCase("ib1")){
+		            	classificador = new IB1();
+                    	classificador.buildClassifier(D);
+		            }
+		            if(classificador.classifyInstance(objeto)==1){
+		            		objeto2.setValue((Attribute) fvWekaAttributes.elementAt(57), "1");
+		            }
+		            else{
+		            	objeto2.setValue((Attribute) fvWekaAttributes.elementAt(57), "0");
+		            }
+                    emails.add(objeto2);
                     // O usuario escolheu o algoritmo IBK
                     if(args[0].equalsIgnoreCase("ibk") || args[1].equalsIgnoreCase("ibk")){
                
@@ -115,7 +170,7 @@ public class Classificador {
                               }
                     		out = out + "---------------------------------------------------------" + "\n";
                     	}else{
-                    		out = out + getStatistics(D, classificador);
+                    		out = out + getStatistics(D, classificador,emails);
                             break;
                     	}
 
@@ -134,7 +189,7 @@ public class Classificador {
                            }
                     	out = out + "---------------------------------------------------------" + "\n";}
                     	else{
-                    		out = out + getStatistics(D, classificador);
+                    		out = out + getStatistics(D, classificador,emails);
                             break;
                     	}
                     	
@@ -146,14 +201,14 @@ public class Classificador {
                     	classificador.buildClassifier(D);
                     	if(verbose){
                     	if(classificador.classifyInstance(objeto)==1){
-                    		out = out + arquivos[i].getName() + ": " + "spam" ;
+                    		out = out + arquivos[i].getName() + ": " + "spam" + "\n";
                            }
                            else{
-                        	   out = out + arquivos[i].getName() + ": " + "ham";
+                        	   out = out + arquivos[i].getName() + ": " + "ham"+ "\n";
                            }
                            out = out + "---------------------------------------------------------" + "\n";}
                     	else{
-                    		out = out + getStatistics(D, classificador);
+                    		out = out + getStatistics(D, classificador,emails);
                             break;
                     	}
                     	
@@ -166,14 +221,16 @@ public class Classificador {
             	}
             	
             	if(verbose && classificador != null){
-            		out = out + getStatistics(D, classificador);
+            		out = out + getStatistics(D, classificador,emails);
             	}
             	
             	
             	saveOutFile(out);
+            	System.out.println("Executado com Sucesso !!! Abra o arquivo out.txt no diretorio atual para visualizar os resultados." );
             
     		}
     		catch (Exception e) {
+    			e.printStackTrace();
 				System.out.println("Verifique o diretorio !!!");
 			}
     	}
@@ -194,10 +251,9 @@ public class Classificador {
     	
     }
     
-    private static String getStatistics(Instances D, Classifier C) throws Exception{
+    private static String getStatistics(Instances D, Classifier C, Instances T) throws Exception{
     	Evaluation evaluation = new Evaluation(D);
-        Random rand = new Random(1);
-        evaluation.crossValidateModel(C, D, 10, rand);
+    	evaluation.evaluateModel(C,T);
         return "precision: " + evaluation.precision(0) + "\n" + "recall: " + evaluation.recall(0) + "\n" + "f-measure: " + evaluation.fMeasure(0);
     	
     }
