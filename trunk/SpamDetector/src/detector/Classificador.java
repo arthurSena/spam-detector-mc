@@ -3,11 +3,17 @@ package detector;
 
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Random;
 
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
 import weka.classifiers.lazy.IBk;
 import weka.classifiers.lazy.IB1;
 import weka.classifiers.lazy.KStar;
@@ -16,11 +22,12 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 public class Classificador {
     public static void main(String[] args) throws Exception {
-    	System.out.println("s�klfjdaskldjfklasjdfklasjdfklasjdkflaskldfjaskldfj");
-        //------------------------------------------------------
-        // (1) importação da base de dados de treinamento
-        //------------------------------------------------------
+
     	boolean verbose = false;
+    	String out = "";
+    	
+    	//Definindo os valores da entrada
+    	
         if(args.length <3 ){
         	System.out.println("Entrada invalida !!!");
         }
@@ -39,28 +46,21 @@ public class Classificador {
     			else{
     				source = new DataSource(args[1]);
     			}
-               Instances D = source.getDataSet();
+               
             
-            // 1.1 - espeficicação do atributo classe
+            //espeficicao do atributo classe
+    			
+    		Instances D = source.getDataSet();
+    		
             if (D.classIndex() == -1) {
                 D.setClassIndex(D.numAttributes() - 1);
             }
-           //------------------------------------------------------
-           // (2) Construção do modelo classificador (treinamento)
-           //------------------------------------------------------
-            IBk k3 = new IBk(3);
-            k3.buildClassifier(D);
             
-            KStar kstar = new KStar();
-            kstar.buildClassifier(D);
+           //Construcao do modelo classificador (treinamento)
+          
+            Classifier classificador = null;
             
-            IB1 ib1 = new IB1();
-            ib1.buildClassifier(D);
-            
-           //------------------------------------------------------
-           // (3) Classificando um novo exemplo
-           //------------------------------------------------------
-            
+         
             String[] palavras = new String[]{"make","address","all","3d","our","over","remove","internet",
         			"order","mail","receive","will","people","report","addresses","free","business","email",
         			"you","credit","your","font","000","money","hp","hpl","george","650","lab","labs","telnet",
@@ -77,7 +77,10 @@ public class Classificador {
             else{
             	 diretorio = new File(args[2]);  
             }
-            arquivos = diretorio.listFiles();  
+            arquivos = diretorio.listFiles();
+            
+            //Laco para imprimir os valores das analizes de cada email de acordo
+            //com o algoritmo passado na entrada
             
             for(int i=0;i<arquivos.length;i++){
            	 try {  
@@ -98,71 +101,107 @@ public class Classificador {
                    	 cont ++;
                     }
                     
+                    // O usuario escolheu o algoritmo IBK
                     if(args[0].equalsIgnoreCase("ibk") || args[1].equalsIgnoreCase("ibk")){
+               
+                    	classificador = new IBk(3);
+                    	classificador.buildClassifier(D);
                     	if(verbose){
-                    		if(k3.classifyInstance(objeto)==1){
-                             	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                    		if(classificador.classifyInstance(objeto)==1){
+                             	 out = out + arquivos[i].getName() + ": " + "spam" + "\n";
                               }
                               else{
-                             	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                             	 out = out + arquivos[i].getName() + ": " + "ham" + "\n";
                               }
-                            System.out.println("---------------------------------------------------------");
+                    		out = out + "---------------------------------------------------------" + "\n";
+                    	}else{
+                    		out = out + getStatistics(D, classificador);
+                            break;
                     	}
+
                     }
+                    
+                 // O usuario escolheu o algoritmo Kstar
                     else if(args[0].equalsIgnoreCase("kstar") || args[1].equalsIgnoreCase("kstar")){
+                    	classificador = new KStar();
+                    	classificador.buildClassifier(D);
                     	if(verbose){
-                    	if(kstar.classifyInstance(objeto)==1){
-                          	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                    	if(classificador.classifyInstance(objeto)==1){
+                    		 out = out + arquivos[i].getName() + ": " + "spam" + "\n";
                            }
                            else{
-                          	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                        	   out = out + arquivos[i].getName() + ": " + "ham" + "\n";
                            }
-                           System.out.println("---------------------------------------------------------");}
+                    	out = out + "---------------------------------------------------------" + "\n";}
+                    	else{
+                    		out = out + getStatistics(D, classificador);
+                            break;
+                    	}
+                    	
                     }
+                    
+                 // O usuario escolheu o algoritmo IB1
                     else if(args[0].equalsIgnoreCase("ib1") || args[1].equalsIgnoreCase("ib1")){
+                    	classificador = new IB1();
+                    	classificador.buildClassifier(D);
                     	if(verbose){
-                    	if(ib1.classifyInstance(objeto)==1){
-                          	 System.out.println(arquivos[i].getName() + ": " + "spam");
+                    	if(classificador.classifyInstance(objeto)==1){
+                    		out = out + arquivos[i].getName() + ": " + "spam" ;
                            }
                            else{
-                          	 System.out.println(arquivos[i].getName() + ": " + "ham");
+                        	   out = out + arquivos[i].getName() + ": " + "ham";
                            }
-                           System.out.println("---------------------------------------------------------");}
+                           out = out + "---------------------------------------------------------" + "\n";}
+                    	else{
+                    		out = out + getStatistics(D, classificador);
+                            break;
+                    	}
+                    	
                     }else{
                     	System.out.println("Digite um classificador valido !!!");
                     }
                   } catch (IOException ioe) {  
                      System.out.println("N�o foi poss�vel ler o arquivo: " + arquivos[1].getName());  
                   }  
-            }
+            	}
+            	
+            	if(verbose && classificador != null){
+            		out = out + getStatistics(D, classificador);
+            	}
+            	
+            	
+            	saveOutFile(out);
+            
     		}
     		catch (Exception e) {
 				System.out.println("Verifique o diretorio !!!");
 			}
     	}
     	
-    	
-         
-         
-         
-        
-         
-         // 3.1 criação de uma nova instância
-//         Instance newInst = new Instance(5);
-//         newInst.setDataset(D);
-//         newInst.setValue(0, "rainy");
-//         newInst.setValue(1, 71);
-//         newInst.setValue(2, 79);
-//         newInst.setValue(3, "TRUE");
-//         // 3.2 classificação de uma nova instância
-//         double pred = k3.classifyInstance(newInst);
-//         
-// 
-//         // 3.3 imprime o valor de pred
-//         System.out.println("Predi��o: " + pred);
-//         System.out.println();
          
     }
+    
+    private static void saveOutFile(String outText){
+    	
+    	outText = outText + "\n\n" + new Date(System.currentTimeMillis());
+    	try {
+    		BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
+    		out.write(outText);
+    		out.close();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+    	
+    }
+    
+    private static String getStatistics(Instances D, Classifier C) throws Exception{
+    	Evaluation evaluation = new Evaluation(D);
+        Random rand = new Random(1);
+        evaluation.crossValidateModel(C, D, 10, rand);
+        return "precision: " + evaluation.precision(0) + "\n" + "recall: " + evaluation.recall(0) + "\n" + "f-measure: " + evaluation.fMeasure(0);
+    	
+    }
+    
     /**
      * Metodo que retorna a PORCENTAGEM de ocorrencias dos caracteres listados, em forma de um HashMap
      * @param mensagem Mensagem a ser Analizada
