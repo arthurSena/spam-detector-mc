@@ -10,13 +10,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Random;
 
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
-import weka.classifiers.lazy.IBk;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.lazy.IB1;
-import weka.classifiers.lazy.KStar;
+import weka.classifiers.lazy.IBk;
 import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
@@ -142,8 +141,8 @@ public class Classificador {
 		            if(args[0].equalsIgnoreCase("ibk") || args[1].equalsIgnoreCase("ibk")){
 		            	classificador = new IBk(3);
                     	classificador.buildClassifier(D);
-		            }else if(args[0].equalsIgnoreCase("kstar") || args[1].equalsIgnoreCase("kstar")){
-		            	classificador = new KStar();
+		            }else if(args[0].equalsIgnoreCase("bayes") || args[1].equalsIgnoreCase("bayes")){
+		            	classificador = new NaiveBayes();
                     	classificador.buildClassifier(D);
 		            } else if(args[0].equalsIgnoreCase("ib1") || args[1].equalsIgnoreCase("ib1")){
 		            	classificador = new IB1();
@@ -170,15 +169,15 @@ public class Classificador {
                               }
                     		out = out + "---------------------------------------------------------" + "\n";
                     	}else{
-                    		out = out + getStatistics(D, classificador,emails);
-                            break;
+//                    		out = out + getStatistics(D, classificador,emails);
+//                            break;
                     	}
 
                     }
                     
                  // O usuario escolheu o algoritmo Kstar
-                    else if(args[0].equalsIgnoreCase("kstar") || args[1].equalsIgnoreCase("kstar")){
-                    	classificador = new KStar();
+                    else if(args[0].equalsIgnoreCase("bayes") || args[1].equalsIgnoreCase("bayes")){
+                    	classificador = new NaiveBayes();
                     	classificador.buildClassifier(D);
                     	if(verbose){
                     	if(classificador.classifyInstance(objeto)==1){
@@ -189,8 +188,8 @@ public class Classificador {
                            }
                     	out = out + "---------------------------------------------------------" + "\n";}
                     	else{
-                    		out = out + getStatistics(D, classificador,emails);
-                            break;
+//                    		out = out + getStatistics(D, classificador,emails);
+//                            break;
                     	}
                     	
                     }
@@ -208,8 +207,8 @@ public class Classificador {
                            }
                            out = out + "---------------------------------------------------------" + "\n";}
                     	else{
-                    		out = out + getStatistics(D, classificador,emails);
-                            break;
+//                    		out = out + getStatistics(D, classificador,emails);
+//                            break;
                     	}
                     	
                     }else{
@@ -221,6 +220,10 @@ public class Classificador {
             	}
             	
             	if(verbose && classificador != null){
+            		out = out + getStatistics(D, classificador,emails);
+            	}
+            	
+            	if(! verbose){
             		out = out + getStatistics(D, classificador,emails);
             	}
             	
