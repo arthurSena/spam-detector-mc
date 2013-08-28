@@ -54,6 +54,7 @@ public class Classificador2 {
     			if(verbose){
     				source = new DataSource(args[2]);
     				treinoPath = args[2];
+    				D = source.getDataSet();
     				
     			}
     			else{
