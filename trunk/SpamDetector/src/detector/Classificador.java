@@ -28,6 +28,8 @@ import weka.core.converters.ConverterUtils.DataSource;
 public class Classificador {
 	
 	private static Instances emails;
+	private static double hamCount;
+	private static double spamCount;
 	
 	
     public static void main(String[] args) throws Exception {
@@ -35,6 +37,8 @@ public class Classificador {
     	boolean verbose = false;
     	String out = "";
     	Instances D = null;
+    	hamCount = 0;
+    	spamCount = 0;
     	
     	//Definindo os valores da entrada
     	
@@ -196,9 +200,11 @@ public class Classificador {
                     	if(verbose){
                     		if(classificador.classifyInstance(objeto)==1){
                              	 out = out + arquivos[i].getName() + ": " + "spam" + "\n";
+                             	 spamCount++;
                               }
                               else{
                              	 out = out + arquivos[i].getName() + ": " + "ham" + "\n";
+                             	 hamCount++;
                               }
                     		out = out + "---------------------------------------------------------" + "\n";
                     	}else{
@@ -215,9 +221,11 @@ public class Classificador {
                     	if(verbose){
                     	if(classificador.classifyInstance(objeto)==1){
                     		 out = out + arquivos[i].getName() + ": " + "spam" + "\n";
+                    		 spamCount++;
                            }
                            else{
                         	   out = out + arquivos[i].getName() + ": " + "ham" + "\n";
+                        	   hamCount++;
                            }
                     	out = out + "---------------------------------------------------------" + "\n";}
                     	else{
@@ -234,9 +242,11 @@ public class Classificador {
                     	if(verbose){
                     	if(classificador.classifyInstance(objeto)==1){
                     		out = out + arquivos[i].getName() + ": " + "spam" + "\n";
+                    		spamCount++;
                            }
                            else{
                         	   out = out + arquivos[i].getName() + ": " + "ham"+ "\n";
+                        	   hamCount++;
                            }
                            out = out + "---------------------------------------------------------" + "\n";}
                     	else{
@@ -386,8 +396,11 @@ public class Classificador {
 	}
 
 	private static void saveOutFile(String outText){
+		
+    	String counts = "\n\nSpam: " + ((spamCount / ( hamCount + spamCount )) * 100) + "%"+ "\nHam: " + ((hamCount / ( hamCount + spamCount )) * 100) + "%" + "\nTotal: " + (spamCount + hamCount);
+    	outText += counts + "\n\n" + new Date(System.currentTimeMillis());
     	
-    	outText = outText + "\n\n" + new Date(System.currentTimeMillis());
+    	
     	try {
     		BufferedWriter out = new BufferedWriter(new FileWriter("out.txt"));
     		out.write(outText);
